@@ -1,0 +1,26 @@
+<div>
+    <h1>Edit Your Profile </h1>
+    <hr>
+    <div class="col-md-4">
+        <form (ngSubmit)="saveProfile(profileForm.value)" [formGroup]="profileForm" autocomplete="off" novalidate [formGroup]="profileForm">
+            <div class="form-group" [ngClass]="{'error': !validateFirstName() }">
+                <label for="firstName">First Name:</label>
+                <input formControlName="firstName" id="firstName" type="text" class="form-control" placeholder="First Name..." />
+                <em *ngIf="!validateFirstName() && profileForm.controls.firstName.errors.required">Required</em>
+                <em *ngIf="!validateFirstName() && profileForm.controls.firstName.errors.pattern">Start with letter</em>
+            </div>
+            <div class="form-group" [ngClass]="{'error': !validateLastName() }">
+                <label for="lastName">Last Name:</label>
+                <input formControlName="lastName" id="lastName" type="text" class="form-control" placeholder="Last Name..." />
+                <em *ngIf="!validateLastName() && profileForm.controls.lastName.errors.required">Required</em>
+                <em *ngIf="!validateLastName() && profileForm.controls.lastName.errors.pattern">Start with letter</em>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-default" (click)="cancel()">Cancel</button>
+        </form>
+    </div>
+</div>
+{{profileForm.controls.firstName.touched}}
+{{profileForm.controls.firstName.invalid}}
+{{profileForm.controls.firstName.dirty}}

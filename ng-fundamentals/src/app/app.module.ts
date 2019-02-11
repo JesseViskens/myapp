@@ -1,0 +1,75 @@
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+
+import { EventsAppComponent } from './events-app.component';
+import { NavBarComponent } from './nav/navbar.component';
+import { TOASTR_TOKEN, Toastr } from './shared/toastr.service';
+import { RouterModule } from '@angular/router';
+import { appRoutes } from './routes';
+import { Error404Component } from './errors/404.component';
+
+
+import {
+  EventListComponent,
+  EventThumbnailComponent,
+  EventService,
+  EventDetailsComponent,
+  CreateEventComponent,
+  EventRouteActivator,
+  EventListResolver,
+  CreateSessionComponent,
+  SessionListComponent,
+  DurationPipe
+}from './events/index'
+import { AuthService } from './user/auth.service';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CollapsableWellComponent } from './collapsable-well.component';
+
+// de Toastr is een type (zoals any) dit werd aangemaakt in de shared/toastr.service
+declare let toastr:Toastr
+
+@NgModule({
+  imports: [
+    BrowserModule,
+    FormsModule,
+    ReactiveFormsModule,
+    //routes inporteren in onze app
+    RouterModule.forRoot(appRoutes)
+  ],
+  declarations: [
+    EventsAppComponent,
+    EventListComponent,
+    EventThumbnailComponent,
+    NavBarComponent,
+    EventDetailsComponent,
+    CreateEventComponent,
+    Error404Component,
+    CreateSessionComponent,
+    SessionListComponent,
+    CollapsableWellComponent,
+    DurationPipe
+  ],//hier komen components
+
+  providers: [
+    EventService,
+    {provide: TOASTR_TOKEN, useValue: toastr},
+    {provide: EventRouteActivator, useClass: EventRouteActivator},// dit is hetzelfde als dat je gewoon EventRouteActivator zou schrijven bij de andere providers (useclass = wat we normaal doen)
+    EventRouteActivator,
+    EventListResolver,
+    AuthService,
+    //wanneer provide gevraagd wordt, geef useValue om het te doen
+    {provide: 'canDeactivateCreateEvent', useValue:checkDirtyState}
+    
+  ],//services komen hier
+  bootstrap: [EventsAppComponent]
+})
+export class AppModule { }
+//functie om te testen of je gegevens ingevuld hebt op deze pagna
+//als er nog iets in de component staat, krijg je een popup venster om te melden of je echt wel weg wil
+export function checkDirtyState(component: CreateEventComponent){
+  if(component.isDirty)
+    return window.confirm('wilde echt weg?')
+    //component is niet vuil, dan returnen we gewoon true
+  return true
+  
+}
