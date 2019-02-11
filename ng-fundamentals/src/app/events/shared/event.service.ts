@@ -1,38 +1,59 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
-import { IEvent } from './event.model';
+import { IEvent, ISession } from './event.model';
+
 
 @Injectable() //enkel nodig wanneer je een extra service injecteert in een ander service. voeg het best altijd toe.
 export class EventService {
-//we krijgen hier een observable (subject = observable) buiten van het type IEventArray
-    getEvents():Observable<IEvent[]> {
+    //we krijgen hier een observable (subject = observable) buiten van het type IEventArray
+    getEvents(): Observable<IEvent[]> {
         //subject komt van RXJS en gaat ons object asynchroon benaderen
         //subject is een soort van observable
         let subject = new Subject<IEvent[]>()
         //setTimeout: na 100ms voegen we data toe aan de subject observablestream
         setTimeout(() => {
             //we gaan data toevoegen aan de observable
-           subject.next(EVENTS); 
-           subject.complete(); }, 100);
+            subject.next(EVENTS);
+            subject.complete();
+        }, 100);
         //we doen dit binnen timeout, om ansynchroon te simuleren
         return subject
     }
-    getEvent(id:number): IEvent{
+    getEvent(id: number): IEvent {
         console.log(id);
         return EVENTS.find(event => event.id === id)
     }
-    saveEvent(event){
+    saveEvent(event) {
         event.id = 999
         event.sessions = []
         EVENTS.push(event)
     }
-    updateEvent(event){
+    updateEvent(event) {
         let index = EVENTS.findIndex(x => x.id = event.id) //we zoeken de index van waar de id overeenkomt
         EVENTS[index] = event // op locatie van de id gaan we ons event updaten EVENTS[2] = {object}
 
     }
+    searchSessions(searchTerm: String) {
+        var term = searchTerm.toLocaleLowerCase();
+        var results: ISession[] = []; //dit is een lege array maken van het type ISession
+        //we gaan bij elk van de evenementen kijken of er een sessie bestaat waarbij de naam onze term bevat. (>-1 is om te zeggen of de lijst bestaat)
+        EVENTS.forEach(event => {
+            var matchingSessions = event.sessions.filter(session => session.name.toLocaleLowerCase().indexOf(term) > -1);
+            //we krijgen enkel de sessie binnen en niet het gehele event. we hebben de eventid nodig en gaan deze dus mappen
+            matchingSessions = matchingSessions.map((session: any) => {
+                session.eventId = event.id;
+                return session;
+            })
+            results = results.concat(matchingSessions);
+        })
+        var emitter = new EventEmitter(true);
+        setTimeout(() => {
+            emitter.emit(results);
+        },100);
+        return emitter;
+    }
 }
-const EVENTS:IEvent[] = [
+const EVENTS: IEvent[] = [
     {
         id: 1,
         name: 'Angular Connect',
@@ -109,7 +130,7 @@ const EVENTS:IEvent[] = [
             driving cars and butler-bots in no time.`,
                 voters: ['bradgreen', 'igorminar']
             },
-           {
+            {
                 id: 6,
                 name: "zztest",
                 presenter: "Jesse",
@@ -120,7 +141,7 @@ const EVENTS:IEvent[] = [
             your users devices before they even hit your site using the 
             new predictive algorithms and thought reading software 
             built into Angular 4.`,
-                voters: ['jesse','bert']
+                voters: ['jesse', 'bert']
             },
         ]
     },

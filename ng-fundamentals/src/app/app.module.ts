@@ -1,9 +1,9 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
+import { JQ_TOKEN, TOASTR_TOKEN, Toastr, CollapsableWellComponent,  SimpleModalComponent, ModalTriggerDirective} from './shared/index';
 import { EventsAppComponent } from './events-app.component';
 import { NavBarComponent } from './nav/navbar.component';
-import { TOASTR_TOKEN, Toastr } from './shared/toastr.service';
+
 import { RouterModule } from '@angular/router';
 import { appRoutes } from './routes';
 import { Error404Component } from './errors/404.component';
@@ -19,14 +19,16 @@ import {
   EventListResolver,
   CreateSessionComponent,
   SessionListComponent,
-  DurationPipe
+  DurationPipe,
+
 }from './events/index'
 import { AuthService } from './user/auth.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CollapsableWellComponent } from './collapsable-well.component';
+
 
 // de Toastr is een type (zoals any) dit werd aangemaakt in de shared/toastr.service
-declare let toastr:Toastr
+let toastr:Toastr = window['toastr'];
+let jQuery = window['$']
 
 @NgModule({
   imports: [
@@ -47,12 +49,15 @@ declare let toastr:Toastr
     CreateSessionComponent,
     SessionListComponent,
     CollapsableWellComponent,
-    DurationPipe
-  ],//hier komen components
+    DurationPipe,
+    SimpleModalComponent,
+    ModalTriggerDirective
+  ],//hier komen components + directives
 
   providers: [
     EventService,
     {provide: TOASTR_TOKEN, useValue: toastr},
+    {provide: JQ_TOKEN, useValue: jQuery},
     {provide: EventRouteActivator, useClass: EventRouteActivator},// dit is hetzelfde als dat je gewoon EventRouteActivator zou schrijven bij de andere providers (useclass = wat we normaal doen)
     EventRouteActivator,
     EventListResolver,
