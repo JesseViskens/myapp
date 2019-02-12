@@ -7,7 +7,7 @@ import { NavBarComponent } from './nav/navbar.component';
 import { RouterModule } from '@angular/router';
 import { appRoutes } from './routes';
 import { Error404Component } from './errors/404.component';
-
+import { HttpClientModule } from '@angular/common/http';
 
 import {
   EventListComponent,
@@ -36,7 +36,8 @@ let jQuery = window['$']
     FormsModule,
     ReactiveFormsModule,
     //routes inporteren in onze app
-    RouterModule.forRoot(appRoutes)
+    RouterModule.forRoot(appRoutes),
+    HttpClientModule
   ],
   declarations: [
     EventsAppComponent,
