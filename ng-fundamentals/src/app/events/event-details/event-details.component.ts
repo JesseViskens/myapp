@@ -13,47 +13,46 @@ import { IEvent, ISession } from '../shared';
 })
 
 // url zal zijn: /events/1
-export class EventDetailsComponent implements OnInit{
+export class EventDetailsComponent implements OnInit {
     addMode: boolean
-    event:IEvent
+    event: IEvent
     filterBy: string = 'all'//we zetten standaard onze filter op toon alles
-    sortBy:string = 'votes';
+    sortBy: string = 'votes';
     visibleSessions: ISession[] = [];
 
 
-    constructor(private eventService: EventService, private route: ActivatedRoute){}
-    ngOnInit(){
+    constructor(private eventService: EventService, private route: ActivatedRoute) { }
+    ngOnInit() {
         this.setState();
     }
-    setState(){
+    setState() {
         console.log('oninit')
         //dit geeft ons de parameters die met de url meekomen  vv
         //this.eventService.getEvent(this.route.snapshot.params['id'])
         // this.event = this.eventService.getEvent(+this.route.snapshot.params['id'])
         //het probleem hiermee is dat snapshot niet meer op changes luisterd
 
-        this.route.params.forEach((params:Params) =>{
-            this.event = this.eventService.getEvent(+params['id']);
+        this.route.data.forEach((data) => {
+            this.event = data['event'];
             this.addMode = false;
-
         })
     }
-    addSession(){
+    addSession() {
         //aangeven of er geflagt is of niet
         this.addMode = true
     }
-    saveNewSession(session:ISession){
+    saveNewSession(session: ISession) {
         const nextId = Math.max.apply(null, this.event.sessions.map(s => s.id)); //geeft ons de hoogste session id
 
-        session.id = nextId +1//voeg id toe aan de huidige session
+        session.id = nextId + 1//voeg id toe aan de huidige session
         this.event.sessions.push(session) //duw het objet naar sessions (voeg het toe aan den array)
-        this.eventService.updateEvent(this.event)// we updaten het event, wat neer komt op dat we het event gaan updaten. 
-                                                 //(we voegen eigenlijk enkel een session toe, kan ook updtaen worden)
+        this.eventService.saveEvent(this.event).subscribe();// we updaten het event, wat neer komt op dat we het event gaan updaten. 
+        //(we voegen eigenlijk enkel een session toe, kan ook updtaen worden)
         this.addMode = false
 
         console.log(session)
     }
-    cancelAddSession(){
+    cancelAddSession() {
         this.addMode = false
     }
 }

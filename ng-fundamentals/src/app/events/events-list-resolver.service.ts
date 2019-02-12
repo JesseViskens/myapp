@@ -13,6 +13,6 @@ constructor(private eventService: EventService){}
 
         //we gebruiken map omdat we de observable moeten teruggeven. 
         //we hadden ook subscribe kunnen gebruiken maar die gaf geen observable terug. map doet hetzelfde, maar geeeft wel de observable terug
-        return this.eventService.getEvents().pipe(map(events => events))   
+        return this.eventService.getEvents()   
     }
 }
