@@ -7,7 +7,7 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "server": "node node_modules/ngf-server/server.js" ,
+    "server": "node node_modules/ngf-server/server.js",
     "e2e": "ng e2e"
   },
   "private": true,
