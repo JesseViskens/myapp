@@ -15,7 +15,6 @@ import {
   EventService,
   EventDetailsComponent,
   CreateEventComponent,
-  EventRouteActivator,
   EventListResolver,
   CreateSessionComponent,
   SessionListComponent,
@@ -59,8 +58,7 @@ let jQuery = window['$']
     EventService,
     {provide: TOASTR_TOKEN, useValue: toastr},
     {provide: JQ_TOKEN, useValue: jQuery},
-    {provide: EventRouteActivator, useClass: EventRouteActivator},// dit is hetzelfde als dat je gewoon EventRouteActivator zou schrijven bij de andere providers (useclass = wat we normaal doen)
-    EventRouteActivator,
+    {provide: EventListResolver, useClass: EventListResolver},// dit is hetzelfde als dat je gewoon EventRouteActivator zou schrijven bij de andere providers (useclass = wat we normaal doen)
     EventListResolver,
     AuthService,
     //wanneer provide gevraagd wordt, geef useValue om het te doen
