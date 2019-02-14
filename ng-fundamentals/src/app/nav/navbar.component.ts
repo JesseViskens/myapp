@@ -19,7 +19,8 @@ export class NavBarComponent {
     searchSessions(searchTerm) {
         //we verwachten een lijst van sessies, en we zetten onze foundsession gelijk aan deze lijst van sessions
         this.eventService.searchSessions(searchTerm).subscribe(sessions => {
-        this.foundSessions = sessions; console.log(this.foundSessions);
+            this.foundSessions = sessions;
+            console.log(this.foundSessions);
         })
 
     }

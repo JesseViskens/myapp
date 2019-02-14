@@ -3,6 +3,7 @@ import { EventService } from './shared/event.service';
 import { toBase64String } from '@angular/compiler/src/output/source_map';
 import { ActivatedRoute } from '@angular/router';
 import { IEvent } from './shared';
+import { Observable } from 'rxjs';
 
 //dit doen we om typescript te laten weten dat dit gedeclareert is ergens anders (angular.json)
 //[declare let toastr] --> dit is globaal, wat niet aangeraden is! 
@@ -16,6 +17,7 @@ import { IEvent } from './shared';
         <div class="row">
             <div class="col-md-5" *ngFor="let event of events">
                 <event-thumbnail [event]="event" ></event-thumbnail>
+                <button class="btn btn-danger" (click)="deleteEvent(event.id)">delete</button>
             </div>
         </div>
 
@@ -34,6 +36,11 @@ export class EventListComponent implements OnInit {
     ngOnInit() {
         // de events tussen de haakjes is dezelfde events die we terugvinden in de routes
         this.events = this.route.snapshot.data['events']
+    }
+    deleteEvent(id: number){
+        console.log('delete' + id)
+        this.eventService.deleteEvent(id);
+        this.ngOnInit()
     }
 
 }

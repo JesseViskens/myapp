@@ -31,15 +31,10 @@ export class EventDetailsComponent implements OnInit {
         // this.event = this.eventService.getEvent(+this.route.snapshot.params['id'])
         //het probleem hiermee is dat snapshot niet meer op changes luisterd
 
-        this.route.params.forEach((params: Params) => {
-            this.eventService.getEvent(+params['id']).subscribe((event: IEvent) => {
-                this.addMode = false;
-                this.event = event
-                console.log(params);
-            })
-
-
-
+        this.route.data.forEach((data) => {
+            this.addMode = false;
+            this.event = data['event'];
+            console.log(this.event);
         });
     }
     addSession() {

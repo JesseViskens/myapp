@@ -46,7 +46,7 @@
       </div>
     </div>
     <!--je bindt de property session van de <session-list></session-list>component aan de sessionsarray van event-->
-    <session-list *ngIf="!addMode" [filterBy]="filterBy" [sortBy]="sortBy" [sessions]="event?.sessions" ></session-list>
+    <session-list [eventId]="event?.id" *ngIf="!addMode" [filterBy]="filterBy" [sortBy]="sortBy" [sessions]="event?.sessions" ></session-list>
     <!--we hebben onze knop cancel bij create session gekoppelt aan een functie in create session die we via output koppelen aan deze session.
     deze functie noemt cancelAddSession-->
     <create-session *ngIf="addMode" (saveNewSession)="saveNewSession($event)" (cancelAddSession)="cancelAddSession()"></create-session>

@@ -6,19 +6,28 @@ import { Router } from '@angular/router';
     templateUrl: './login.component.html',
     styles: [`em{ float:right; color:#E05C65; padding-left:10px;}`]
 })
-export class LoginComponent{
+export class LoginComponent {
     //dit moeten we doen om in productie te kunnen gaan. dit zijn de bindings met ngModel
-    constructor(private authService: AuthService, private router: Router){}
+    constructor(private authService: AuthService, private router: Router) { }
     userName
     password
     mouseoverLogin
-    login(formValues){
+    loginInvalid = false;
+    login(formValues) {
         console.log(formValues);
         this.authService.loginUser(formValues.userName, formValues.password)
-        //navigeer naar de events pagina
-        this.router.navigate(['events'])
+            .subscribe(
+                resp => {
+                    if (!resp) {
+                        this.loginInvalid = true;
+                    } else {
+                        //navigeer naar de events pagina
+                        this.router.navigate(['events']);
+                    }
+                })
+
     }
-    cancel(){
+    cancel() {
         this.router.navigate(['events'])
     }
 }

@@ -1,54 +1,52 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Subject, Observable, of } from 'rxjs';
 import { IEvent, ISession } from './event.model';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 
+
+let options = {
+    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+};
 
 @Injectable() //enkel nodig wanneer je een extra service injecteert in een ander service. voeg het best altijd toe.
 export class EventService {
 
-    constructor(private http: HttpClient){}
+    constructor(private http: HttpClient) { }
     //we krijgen hier een observable (subject = observable) buiten van het type IEventArray
     getEvents(): Observable<IEvent[]> {
-        return this.http.get<IEvent[]>('api/events').pipe(catchError(this.handleError<IEvent[]>('getEvents', []))); 
+        return this.http.get<IEvent[]>('api/events').pipe(catchError(this.handleError<IEvent[]>('getEvents', [])));
     }
     getEvent(id: number): Observable<IEvent> {
-        console.log("getevent van id: " + id)
-        return this.http.get<IEvent>('api/events/'+ id).pipe(catchError(this.handleError<IEvent>('getEvent'))); 
+        return this.http.get<IEvent>('api/events/' + id).pipe(catchError(this.handleError<IEvent>('getEvent')));
 
     }
     saveEvent(event) {
-        event.id = 999
-        event.sessions = []
-        EVENTS.push(event)
-    }
-    updateEvent(event) {
-        let index = EVENTS.findIndex(x => x.id = event.id) //we zoeken de index van waar de id overeenkomt
-        EVENTS[index] = event // op locatie van de id gaan we ons event updaten EVENTS[2] = {object}
+        //headers is een restricted name.
+
+        //de IEvent hoort erbij omdat we een response van de db kunnen verwachten met bvb de id van dit object
+        return this.http.post<IEvent>('/api/events/', event, options).pipe(catchError(this.handleError<IEvent>('postEvent')));
 
     }
-    searchSessions(searchTerm: String) {
-        var term = searchTerm.toLocaleLowerCase();
-        var results: ISession[] = []; //dit is een lege array maken van het type ISession
-        //we gaan bij elk van de evenementen kijken of er een sessie bestaat waarbij de naam onze term bevat. (>-1 is om te zeggen of de lijst bestaat)
-        EVENTS.forEach(event => {
-            var matchingSessions = event.sessions.filter(session => session.name.toLocaleLowerCase().indexOf(term) > -1);
-            //we krijgen enkel de sessie binnen en niet het gehele event. we hebben de eventid nodig en gaan deze dus mappen
-            matchingSessions = matchingSessions.map((session: any) => {
-                session.eventId = event.id;
-                return session;
-            })
-            results = results.concat(matchingSessions);
-        })
-        var emitter = new EventEmitter(true);
-        setTimeout(() => {
-            emitter.emit(results);
-        },100);
-        return emitter;
+    updateEvent(event) {
+        /*
+            let index = EVENTS.findIndex(x => x.id = event.id) //we zoeken de index van waar de id overeenkomt
+            EVENTS[index] = event // op locatie van de id gaan we ons event updaten EVENTS[2] = {object}
+        */
+        //een put werkt hetzelfde als een post, je hoeft niet te checken op id want je stuurt het hele object mee
+        return this.http.put<IEvent>('/api/events', event, options).pipe(catchError(this.handleError<IEvent>('updateEvent')));
+
+    }
+    deleteEvent(id: number) {
+        console.log(`eventservice>deleteEvent ` + id)
+        return this.http.delete(`/api/events/${id}`).pipe(catchError(this.handleError<IEvent>(`delete van ${id}`)));
+    }
+
+    searchSessions(searchTerm: String): Observable<ISession[]> {
+        return this.http.get<ISession[]>('/api/sessions/search?search=' + searchTerm).pipe(catchError(this.handleError<ISession[]>(`searchsession`)));
     }
     //basic error handling
-    private handleError<T>(operation='operation', result?: T){
+    private handleError<T>(operation = 'operation', result?: T) {
         return (error: any): Observable<T> => {
             console.error(error);
             return of(result as T);

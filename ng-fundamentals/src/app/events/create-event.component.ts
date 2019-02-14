@@ -11,14 +11,14 @@ export class CreateEventComponent{
     isDirty:boolean = true
 constructor(private router: Router, private eventService: EventService){}
 
-
-
     saveEvent(formValues){
         console.log(formValues);
-        this.eventService.saveEvent(formValues)
+        this.eventService.saveEvent(formValues).subscribe(() => {
         //we gaan zeggen dat het formulier niet meer dirty is, alle gegevens zijn dorgestuurd
         this.isDirty = false
         this.router.navigate(['/events'])
+        })
+
     }
 
     cancel(){

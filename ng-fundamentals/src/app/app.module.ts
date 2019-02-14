@@ -19,6 +19,10 @@ import {
   CreateSessionComponent,
   SessionListComponent,
   DurationPipe,
+  EventResolver,
+  VoterService,
+  UpvoteComponent,
+  LocationValidator
 
 }from './events/index'
 import { AuthService } from './user/auth.service';
@@ -51,7 +55,10 @@ let jQuery = window['$']
     CollapsableWellComponent,
     DurationPipe,
     SimpleModalComponent,
-    ModalTriggerDirective
+    ModalTriggerDirective,
+    UpvoteComponent,
+    LocationValidator
+    
   ],//hier komen components + directives
 
   providers: [
@@ -60,7 +67,9 @@ let jQuery = window['$']
     {provide: JQ_TOKEN, useValue: jQuery},
     {provide: EventListResolver, useClass: EventListResolver},// dit is hetzelfde als dat je gewoon EventRouteActivator zou schrijven bij de andere providers (useclass = wat we normaal doen)
     EventListResolver,
+    EventResolver,
     AuthService,
+    VoterService,
     //wanneer provide gevraagd wordt, geef useValue om het te doen
     {provide: 'canDeactivateCreateEvent', useValue:checkDirtyState}
     
