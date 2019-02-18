@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { AuthService } from './auth.service';
 import { Router } from '@angular/router';
+import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
+import { ToastService } from '../shared';
 
 @Component({
     templateUrl: './login.component.html',
@@ -8,7 +10,7 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
     //dit moeten we doen om in productie te kunnen gaan. dit zijn de bindings met ngModel
-    constructor(private authService: AuthService, private router: Router) { }
+    constructor(private authService: AuthService, private router: Router, private toastr: ToastService) { }
     userName
     password
     mouseoverLogin
@@ -18,12 +20,16 @@ export class LoginComponent {
         this.authService.loginUser(formValues.userName, formValues.password)
             .subscribe(
                 resp => {
-                    if (!resp) {
-                        this.loginInvalid = true;
-                    } else {
-                        //navigeer naar de events pagina
-                        this.router.navigate(['events']);
+                    this.router.navigate(['events']);
+                },
+                (error: HttpErrorResponse)=>{
+                    this.loginInvalid = true;
+                    console.log("component "+ error.status)
+                    if(error.status == 403)
+                    {
+                        this.toastr.error(error.statusText.toString(),`an error occured (${error.status})`)
                     }
+
                 })
 
     }

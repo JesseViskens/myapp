@@ -2,7 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core'
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from './auth.service';
-import { Toastr, TOASTR_TOKEN } from '../shared/toastr.service';
+import { ToastService } from '../shared';
 
 
 @Component({
@@ -18,10 +18,7 @@ export class ProfileComponent implements OnInit {
   constructor(
     private router: Router,
     private auth: AuthService,
-
-    //we halen aan de hand van TOASTR_TOKEN de service zoeken in de dependency injection registry de :Toastr is puur voor de intellicense
-    @Inject(TOASTR_TOKEN) private toastr: Toastr
-    
+    private toastr: ToastService
     ){}
 
 
@@ -39,13 +36,19 @@ export class ProfileComponent implements OnInit {
   }
   saveProfile(formValues){
     if(this.profileForm.valid){
-      this.auth.updateCurrentUser(formValues.firstName, formValues.lastName);
-      this.toastr.success('Profile saved');
+      this.auth.updateCurrentUser(formValues.firstName, formValues.lastName).subscribe(() => {
+        this.toastr.success('Profile saved');
+      });
     }
     else{
       this.toastr.error('invalid');
     }
 
+  }
+  logout(){
+    this.auth.logout().subscribe(()=> {
+      this.router.navigate(['/user/login']);
+    })
   }
   validateLastName(){
     return this.lastName.valid || this.lastName.untouched 

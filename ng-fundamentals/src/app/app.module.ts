@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { JQ_TOKEN, TOASTR_TOKEN, Toastr, CollapsableWellComponent,  SimpleModalComponent, ModalTriggerDirective} from './shared/index';
+import { JQ_TOKEN,CollapsableWellComponent,  SimpleModalComponent, ModalTriggerDirective, ToastService} from './shared/index';
 import { EventsAppComponent } from './events-app.component';
 import { NavBarComponent } from './nav/navbar.component';
 
@@ -28,9 +28,6 @@ import {
 import { AuthService } from './user/auth.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-
-// de Toastr is een type (zoals any) dit werd aangemaakt in de shared/toastr.service
-let toastr:Toastr = window['toastr'];
 let jQuery = window['$']
 
 @NgModule({
@@ -63,13 +60,13 @@ let jQuery = window['$']
 
   providers: [
     EventService,
-    {provide: TOASTR_TOKEN, useValue: toastr},
     {provide: JQ_TOKEN, useValue: jQuery},
     {provide: EventListResolver, useClass: EventListResolver},// dit is hetzelfde als dat je gewoon EventRouteActivator zou schrijven bij de andere providers (useclass = wat we normaal doen)
     EventListResolver,
     EventResolver,
     AuthService,
     VoterService,
+    ToastService,
     //wanneer provide gevraagd wordt, geef useValue om het te doen
     {provide: 'canDeactivateCreateEvent', useValue:checkDirtyState}
     

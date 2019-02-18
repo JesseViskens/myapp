@@ -1,8 +1,10 @@
 import { Injectable } from "@angular/core";
 import { IUser } from './user.model';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { tap, catchError } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
+import { ToastService } from '../shared';
+
 
 const options = {
     headers: new HttpHeaders(
@@ -16,7 +18,7 @@ const options = {
 export class AuthService {
     currentUser: IUser
 
-    constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient, private toastr: ToastService) { }
 
 
 
@@ -31,8 +33,6 @@ export class AuthService {
 
         return this.http.post('/api/login', loginInfo, options).pipe(tap(data => {
             this.currentUser = <IUser>data['user'];
-        })).pipe(catchError(err => {
-            return  of(false) //Returns an Observable instance that synchronously delivers the values provided as arguments.
         }))
     }
     isAuthenticated() {
@@ -50,6 +50,12 @@ export class AuthService {
     updateCurrentUser(firstName: string, lastName: string) {
         this.currentUser.firstName = firstName;
         this.currentUser.lastName = lastName;
+        console.log('currentuserfirstname in authservice : '+this.currentUser.firstName)
+        return this.http.put(`/api/users/${this.currentUser.id}`,this.currentUser, options)
+
+    }
+    logout(){
+        return this.http.post('/api/logout',{}, options);
     }
     //basic error handling
     private handleError<T>(operation = 'operation', result?: T) {
